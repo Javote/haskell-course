@@ -5,6 +5,9 @@
 -- >>> repeat 17
 --[17,17,17,17,17,17,17,17,17...
 
+repeat' :: a -> [a]
+repeat' x = x : repeat' x 
+
 
 -- Question 2
 -- Using the `repeat'` function and the `take` function we defined in the lesson (comes with Haskell),
@@ -18,12 +21,17 @@
 -- >>> replicate 4 True
 -- [True,True,True,True]
 
+replicate :: Int -> a -> [a]
+replicate n x = take n (repeat' x)
 
 -- Question 3
 -- Write a function called `concat'` that concatenates a list of lists.
 --
 -- >>> concat' [[1,2],[3],[4,5,6]]
 -- [1,2,3,4,5,6]
+
+concat' :: [[a]] -> [a]
+concat' = foldr (++) []
 
 
 -- Question 4
@@ -45,6 +53,10 @@
 -- >>> zip' [1..] []
 -- []
 
+zip' :: [a] -> [b] -> [(a, b)]
+zip' [] _bs = []
+zip' _as [] = []
+zip' (a : as) (b : bs) = (a, b) : zip' as bs
 
 
 -- Question 5
@@ -60,6 +72,11 @@
 -- >>> zipWith (+) [1, 2, 3] [4, 5, 6]
 -- [5,7,9]
 
+zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith' _ [] _ = []
+zipWith' _ _ [] = []
+zipWith' f (x : xs) (y : ys) = f x y : zipWith' f xs ys
+
 
 -- Question 6
 -- Write a function called `takeWhile'` that takes a precate and a list and
@@ -72,11 +89,24 @@
 -- >>> takeWhile (< 0) [1,2,3]
 -- []
 
+takeWhile' :: (a -> Bool) -> [a] -> [a]
+takeWhile' _ [] = []
+takeWhile' p (x : xs)
+  | p x = x : takeWhile' p xs
+  | otherwise = []
+
 
 -- Question 7 (More difficult)
 -- Write a function that takes in an integer n, calculates the factorial n! and
 -- returns a string in the form of 1*2* ... *n = n! where n! is the actual result.
 
+factorial :: Int -> String
+factorial n = accumulate 2 "1" ++ " = " ++ show result
+  where
+    accumulate x string
+      | x > n = string
+      | otherwise = accumulate (x + 1) (string ++ "*" ++ show x)
+    result = product [1 .. n]
 
 -- Question 8
 -- Below you have defined some beer prices in bevogBeerPrices and your order list in
